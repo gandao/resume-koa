@@ -1,0 +1,19 @@
+{
+  "name": "resume-koa",
+  "version": "1.0.0",
+  "description": "基于koa的resume的后台，练手的一个东西",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "gandchuan",
+  "license": "ISC",
+  "devDependencies": {
+    "cz-conventional-changelog": "^2.1.0"
+  },
+  "config": {
+    "commitizen": {
+      "path": "./node_modules/cz-conventional-changelog"
+    }
+  }
+}
