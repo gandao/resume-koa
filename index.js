@@ -43,23 +43,5 @@ app.use(logger())
 // 配置路由
 router(app)
 
-// 测试数据库
-const UserModel = require('./models/user')
-const test = {
-  name: '123323',
-  email: '1223@11163.com',
-  password: '123'
-}
-app.use(async (ctx) => {
-  try {
-    const result = await UserModel.create(test)
-    ctx.body = result
-    console.log('try')
-  } catch (err) {
-    ctx.body = err
-    console.log('catch')
-  }
-})
-
 if (!module.parent) app.listen(CONFIG.port)
 console.log(`server is running at http://localhost:${CONFIG.port}`)

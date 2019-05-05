@@ -22,11 +22,11 @@ module.exports = {
     }
     await next()
   },
-
   // 登录
   async signin (ctx, next) {
     const { email, password } = ctx.request.body
     const user = await UserModle.findOne({ email })
+
     if (user) {
       if (await bcrypt.compare(password, user.password)) {
         ctx.session.user = {
@@ -72,7 +72,7 @@ module.exports = {
     } else {
       // 密码加密
       const salt = await bcrypt.genSalt(10)
-      password = bcrypt.hash(password, salt)
+      password = await bcrypt.hash(password, salt)
 
       const user = {
         name,
@@ -98,17 +98,31 @@ module.exports = {
     }
     next()
   },
-
+  // 登出
+  async signout (ctx, next) {
+    ctx.session.user = ''
+    ctx.body = {
+      id: SUCCESS,
+      message: '注销成功'
+    }
+    next()
+  },
   // 更改用户信息
   async editUser (ctx, next) {
     const { name, password } = ctx.request.body
     const { _id } = ctx.session.user
+    let msg = {}
+    if (name !== undefined && name !== null) {
+      msg.name = name
+    }
+    if (password !== undefined && password !== null) {
+      msg.password = password
+    }
 
-    await UserModle.findByIdAndUpdate(_id, {
-      name
-    })
+    await UserModle.findByIdAndUpdate(_id, msg)
 
-    ctx.session.user.isVip = true
+    ctx.session.user.name = name
+
     ctx.body = {
       id: SUCCESS,
       message: '编辑成功'

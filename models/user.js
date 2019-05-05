@@ -22,7 +22,8 @@ const UserSchema = new Schema({
   },
   isAdmin: {
     type: Boolean,
-    required: true
+    required: false,
+    default: false
   },
   meta: {
     createAt: {

@@ -3,10 +3,9 @@ const mongoose = require('mongoose')
 const Schema = mongoose.Schema
 
 const ResumeSchema = new Schema({
-  _uid: {
+  uid: {
     type: String,
-    required: true,
-    unique: true
+    required: true
   },
   name: {
     type: String,
