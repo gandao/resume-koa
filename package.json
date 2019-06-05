@@ -24,12 +24,15 @@
   },
   "dependencies": {
     "bcryptjs": "^2.4.3",
+    "email": "^0.2.6",
     "koa": "^2.6.2",
+    "koa-body": "^4.1.0",
     "koa-bodyparser": "^4.2.1",
     "koa-logger": "^3.2.0",
     "koa-router": "^7.4.0",
     "koa-session": "^5.10.0",
     "koa-static": "^5.0.0",
-    "mongoose": "^5.3.15"
+    "mongoose": "^5.3.15",
+    "nodemailer": "^6.1.1"
   }
 }

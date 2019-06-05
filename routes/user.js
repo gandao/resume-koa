@@ -1,8 +1,18 @@
 const UserModle = require('../models/user')
 const bcrypt = require('bcryptjs')
-
+var nodemailer = require('nodemailer')
 const SUCCESS = 1
 const FAIL = -1
+
+let transporter = nodemailer.createTransport({
+  host: 'smtp.qq.com',
+  port: 465,
+  secure: true,
+  auth: {
+    user: '1906357036@qq.com',
+    pass: 'dxrvqhcokpkufaai'
+  }
+})
 
 module.exports = {
   // 判断是否已经登录
@@ -24,11 +34,12 @@ module.exports = {
   },
   // 登录
   async signin (ctx, next) {
+    // 获取参数
     const { email, password } = ctx.request.body
     const user = await UserModle.findOne({ email })
-
-    if (user) {
-      if (await bcrypt.compare(password, user.password)) {
+    if (user) { // 判断数据库中是否有该邮箱的账号
+      if (await bcrypt.compare(password, user.password)) { // 判断密码是否一致
+        // 后端利用session标记用户
         ctx.session.user = {
           _id: user._id,
           name: user.name,
@@ -144,6 +155,74 @@ module.exports = {
       message: '升级成功'
     }
 
+    next()
+  },
+  // 获取验证码
+  async getcode (ctx, next) {
+    let email = ctx.request.query.email
+    const user = await UserModle.findOne({ email })
+    if (user) {
+      // 生成四位验证码
+
+      let code = Math.floor(Math.random() * 10000).toString()
+      ctx.session.code = code
+
+      let info = await transporter.sendMail({
+        from: '1906357036@qq.com', // sender address
+        to: email,
+        subject: 'resume-build code',
+        text: `验证码：${code}`,
+        html: `<b>验证码：${code}</b>`
+      })
+      await transporter.sendMail(info)
+      ctx.body = {
+        id: SUCCESS,
+        message: '验证码已发送'
+      }
+    } else {
+      ctx.body = {
+        id: FAIL,
+        message: '该邮箱还未注册'
+      }
+    }
+    next()
+  },
+  // 验证验证码
+  async postcode (ctx, next) {
+    let { code } = ctx.request.body
+    if (ctx.session.code === code) {
+      ctx.body = {
+        id: SUCCESS,
+        message: '验证码正确'
+      }
+    } else {
+      ctx.body = {
+        id: FAIL,
+        message: '验证码错误'
+      }
+    }
+    next()
+  },
+  // 修改用户密码
+  async editPassword (ctx, next) {
+    let { email, password } = ctx.request.body
+    const user = await UserModle.findOne({ email })
+    if (user) {
+      // 生成四位验证码
+      const salt = await bcrypt.genSalt(10)
+      password = await bcrypt.hash(password, salt)
+      if (await UserModle.findByIdAndUpdate(user._id, { password })) {
+        ctx.body = {
+          id: SUCCESS,
+          message: '密码修改成功'
+        }
+      }
+    } else {
+      ctx.body = {
+        id: FAIL,
+        message: '修改密码失败'
+      }
+    }
     next()
   }
 }

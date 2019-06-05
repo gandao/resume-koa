@@ -6,6 +6,10 @@ module.exports = (app) => {
   router.post('/resume/signin', require('./user').signin)
   router.post('/resume/signup', require('./user').signup)
 
+  router.post('/resume/postcode', require('./user').postcode)
+  router.get('/resume/getcode', require('./user').getcode)
+
+  router.post('/resume/editPassword', require('./user').editPassword)
   router.post('/resume/editUser', require('./user').editUser)
   router.get('/resume/leverUp', require('./user').LeverUp)
 
@@ -15,6 +19,7 @@ module.exports = (app) => {
   router.post('/resume/saveEdit', require('./resume').saveEdit)
   router.post('/resume/createResume', require('./resume').create)
 
+  router.post('/resume/photo', require('./resume').photo)
   app
     .use(router.routes())
     .use(router.allowedMethods())
